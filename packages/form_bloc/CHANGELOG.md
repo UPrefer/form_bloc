@@ -1,3 +1,7 @@
+## 0.31.1-ephytia.1
+
+ - Bump "form_bloc" to `0.31.1-ephytia.1`.
+
 ## 0.31.1-ephytia.0
 
  - **FIX**: fix linter issues.
