@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`flutter_form_bloc` - `v0.31.1-ephytia.2`](#flutter_form_bloc---v0311-ephytia2)
+
+---
+
+#### `flutter_form_bloc` - `v0.31.1-ephytia.2`
+
+ - Upgrade dependencies
+
+
+## 2025-08-08
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`flutter_form_bloc` - `v0.31.1-ephytia.1`](#flutter_form_bloc---v0311-ephytia1)
  - [`form_bloc` - `v0.31.1-ephytia.1`](#form_bloc---v0311-ephytia1)
 

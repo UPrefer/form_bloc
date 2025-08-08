@@ -1,3 +1,7 @@
+## 0.31.1-ephytia.2
+
+ - Upgrade dependencies
+
 ## 0.31.1-ephytia.1
 
  - Bump "flutter_form_bloc" to `0.31.1-ephytia.1`.
