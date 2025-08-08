@@ -1,3 +1,12 @@
+## 0.31.1-ephytia.0
+
+ - **FIX**: fix linter issues.
+ - **FIX**: onStepCancel.
+ - **FEAT**: flutter_form_bloc v0.31.0.
+ - **FEAT**: update sdk constraints and update some dependencies.
+ - **FEAT**: update generated files of flutter_form_bloc/example.
+ - **DOCS**: remove example test.
+
 # 0.31.0
 
 * Update sdk constraints to `>=2.12.0 <4.0.0`

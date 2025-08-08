@@ -1,3 +1,9 @@
+## 0.31.1-ephytia.0
+
+ - **FIX**: fix linter issues.
+ - **FEAT**: form_bloc v0.31.0.
+ - **FEAT**: update sdk constraints and update some dependencies.
+
 # 0.31.0
 
 * Update sdk constraints to `>=2.12.0 <4.0.0`
