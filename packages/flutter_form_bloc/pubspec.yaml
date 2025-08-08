@@ -16,7 +16,7 @@ dependencies:
   form_bloc: ^0.31.1-ephytia.1
   equatable: ^2.0.3
   rxdart: ^0.28.0
-  flutter_keyboard_visibility: ^5.4.1
+  flutter_keyboard_visibility: ^6.0.0
   collection: ^1.15.0
   intl: ^0.20.2
 
@@ -24,4 +24,4 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
