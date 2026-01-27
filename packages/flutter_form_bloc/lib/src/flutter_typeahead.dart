@@ -612,8 +612,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
   // The rate at which the suggestion box will resize when the user is scrolling
   final Duration _resizeOnScrollRefreshRate = const Duration(milliseconds: 500);
 
-  late StreamSubscription<bool> _keyboardSubscription;
-
   late PublishSubject _hideSuggestionsController;
 
   @override
@@ -630,10 +628,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
     // }
     this._suggestionsBox!.widgetMounted = false;
     WidgetsBinding.instance.removeObserver(this);
-
-    if (isWebMobile) {
-      _keyboardSubscription.cancel();
-    }
 
     _effectiveFocusNode!.removeListener(_focusNodeListener);
     _focusNode?.dispose();
@@ -662,24 +656,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
 
     if (widget.textFieldConfiguration.focusNode == null) {
       this._focusNode = FocusNode();
-    }
-    isWebMobile = kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.iOS ||
-            defaultTargetPlatform == TargetPlatform.android);
-    this._suggestionsBox =
-        _SuggestionsBox(context, widget.direction, widget.autoFlipDirection);
-    widget.suggestionsBoxController?._suggestionsBox = this._suggestionsBox;
-    if (isWebMobile) {
-      keyboardVisibilityController =
-          KeyboardDetectionController(onChanged: (state) {
-        setState(() {
-          if (widget.hideSuggestionsOnKeyboardHide &&
-              state != KeyboardState.visible &&
-              state != KeyboardState.visibling) {
-            _effectiveFocusNode!.unfocus();
-          }
-        });
-      });
     }
 
     this._focusNodeListener = () {
