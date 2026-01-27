@@ -3,7 +3,7 @@ part of '../field/field_bloc.dart';
 /// A `FieldBloc` used for `bool` type.
 class BooleanFieldBloc<ExtraData> extends SingleFieldBloc<bool, bool,
     BooleanFieldBlocState<ExtraData>, ExtraData?> {
-  /// ## BooleanFieldBloc<ExtraData>
+  /// ## BooleanFieldBloc&ltExtraData&gt
   ///
   /// ### Properties:
   ///

@@ -87,7 +87,7 @@ class DateTimeFieldBlocBuilderBase<T> extends StatefulWidget {
   /// {@macro flutter_form_bloc.FieldBlocBuilder.style}
   final TextStyle? textStyle;
 
-  final MaterialStateProperty<Color?>? textColor;
+  final WidgetStateProperty<Color?>? textColor;
 
   /// Defaults `true`
   final bool? showClearIcon;
@@ -107,8 +107,8 @@ class DateTimeFieldBlocBuilderBase<T> extends StatefulWidget {
   final TimeOfDay initialTime;
 
   @override
-  _DateTimeFieldBlocBuilderBaseState createState() =>
-      _DateTimeFieldBlocBuilderBaseState();
+  DateTimeFieldBlocBuilderBaseState createState() =>
+      DateTimeFieldBlocBuilderBaseState();
 
   DateTimeFieldTheme themeStyleOf(BuildContext context) {
     final theme = Theme.of(context);
@@ -135,7 +135,7 @@ class DateTimeFieldBlocBuilderBase<T> extends StatefulWidget {
   }
 }
 
-class _DateTimeFieldBlocBuilderBaseState<T>
+class DateTimeFieldBlocBuilderBaseState<T>
     extends State<DateTimeFieldBlocBuilderBase<T>> {
   final DatePickerMode initialDatePickerMode = DatePickerMode.day;
 
@@ -171,6 +171,7 @@ class _DateTimeFieldBlocBuilderBaseState<T>
       final date = await _showDatePicker(context);
 
       if (date != null) {
+        if (!context.mounted) return;
         final time = await _showTimePicker(context);
         result = _combine(date, time);
       }

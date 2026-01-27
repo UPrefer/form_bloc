@@ -4,7 +4,7 @@ part of '../field/field_bloc.dart';
 /// from multiple items.
 class SelectFieldBloc<Value, ExtraData> extends SingleFieldBloc<Value?, Value,
     SelectFieldBlocState<Value, ExtraData>, ExtraData?> {
-  /// ## SelectFieldBloc<Value, ExtraData>
+  /// ## SelectFieldBloc&ltValue, ExtraData&gt
   ///
   /// ### Properties:
   ///

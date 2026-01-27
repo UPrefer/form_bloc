@@ -4,6 +4,50 @@ import 'package:flutter_form_bloc/src/theme/form_bloc_theme.dart';
 import 'package:flutter_form_bloc/src/theme/material_states.dart';
 import 'package:flutter_form_bloc/src/utils/to_string.dart';
 
+extension InputDecorationThemeFactory on InputDecorationThemeData {
+  InputDecorationTheme toTheme() {
+    return InputDecorationTheme(
+      labelStyle: labelStyle,
+      floatingLabelStyle: floatingLabelStyle,
+      helperStyle: helperStyle,
+      helperMaxLines: helperMaxLines,
+      hintStyle: hintStyle,
+      hintFadeDuration: hintFadeDuration,
+      hintMaxLines: hintMaxLines,
+      errorStyle: errorStyle,
+      errorMaxLines: errorMaxLines,
+      floatingLabelBehavior: floatingLabelBehavior,
+      floatingLabelAlignment: floatingLabelAlignment,
+      isDense: isDense,
+      contentPadding: contentPadding,
+      isCollapsed: isCollapsed,
+      iconColor: iconColor,
+      prefixStyle: prefixStyle,
+      prefixIconColor: prefixIconColor,
+      prefixIconConstraints: prefixIconConstraints,
+      suffixStyle: suffixStyle,
+      suffixIconColor: suffixIconColor,
+      suffixIconConstraints: suffixIconConstraints,
+      counterStyle: counterStyle,
+      filled: filled,
+      fillColor: fillColor,
+      activeIndicatorBorder: activeIndicatorBorder,
+      outlineBorder: outlineBorder,
+      focusColor: focusColor,
+      hoverColor: hoverColor,
+      errorBorder: errorBorder,
+      focusedBorder: focusedBorder,
+      focusedErrorBorder: focusedErrorBorder,
+      disabledBorder: disabledBorder,
+      enabledBorder: enabledBorder,
+      border: border,
+      alignLabelWithHint: alignLabelWithHint,
+      constraints: constraints,
+      visualDensity: visualDensity,
+    );
+  }
+}
+
 /// Resolves looking for the appropriate value to use in the widget
 class FieldThemeResolver {
   final ThemeData theme;
@@ -15,7 +59,7 @@ class FieldThemeResolver {
   InputDecorationTheme get decorationTheme {
     return fieldTheme?.decorationTheme ??
         formTheme.decorationTheme ??
-        theme.inputDecorationTheme;
+        theme.inputDecorationTheme.toTheme();
   }
 
   TextStyle get textStyle {
@@ -24,7 +68,7 @@ class FieldThemeResolver {
         theme.textTheme.titleMedium!;
   }
 
-  MaterialStateProperty<Color?> get textColor {
+  WidgetStateProperty<Color?> get textColor {
     return fieldTheme?.textColor ??
         formTheme.textColor ??
         SimpleMaterialStateProperty(
@@ -41,8 +85,8 @@ abstract class FieldTheme extends Equatable {
   final TextStyle? textStyle;
 
   /// Resolves the color of the [textStyle].
-  /// You will receive [MaterialState.disabled]
-  final MaterialStateProperty<Color?>? textColor;
+  /// You will receive [WidgetState.disabled]
+  final WidgetStateProperty<Color?>? textColor;
 
   /// The theme for InputDecoration of this field
   final InputDecorationTheme? decorationTheme;

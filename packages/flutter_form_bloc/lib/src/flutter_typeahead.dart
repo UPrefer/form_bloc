@@ -590,10 +590,10 @@ class TypeAheadField<T> extends StatefulWidget {
         super(key: key);
 
   @override
-  _TypeAheadFieldState<T> createState() => _TypeAheadFieldState<T>();
+  TypeAheadFieldState<T> createState() => TypeAheadFieldState<T>();
 }
 
-class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
+class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
     with WidgetsBindingObserver {
   FocusNode? _focusNode;
   TextEditingController? _textEditingController;
@@ -1736,7 +1736,7 @@ class _SuggestionsBox {
         // TODO: reduce delay if showDialog ever exposes detection of animation end
         await Future<void>.delayed(const Duration(milliseconds: 170));
         timer += 170;
-
+        if (!context.mounted) return false;
         if (widgetMounted &&
             (MediaQuery.of(context).viewInsets != initial ||
                 _findRootMediaQuery() != initialRootMediaQuery)) {

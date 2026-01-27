@@ -7,7 +7,7 @@ class MultiSelectFieldBloc<Value, ExtraData> extends SingleFieldBloc<
     Value,
     MultiSelectFieldBlocState<Value, ExtraData>,
     ExtraData?> {
-  /// ## MultiSelectFieldBloc<Value, ExtraData>
+  /// ## MultiSelectFieldBloc&ltValue, ExtraData&gt
   ///
   /// ### Properties:
   ///
