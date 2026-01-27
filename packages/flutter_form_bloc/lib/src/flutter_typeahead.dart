@@ -265,7 +265,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:keyboard_detection/keyboard_detection.dart';
 import 'package:rxdart/rxdart.dart';
 
 typedef FutureOr<List<T>> SuggestionsCallback<T>(String pattern);
@@ -648,7 +648,7 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
     super.dispose();
   }
 
-  late final KeyboardVisibilityController keyboardVisibilityController;
+  late final KeyboardDetectionController keyboardVisibilityController;
   late final bool isWebMobile;
   @override
   void initState() {
@@ -670,11 +670,12 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
         _SuggestionsBox(context, widget.direction, widget.autoFlipDirection);
     widget.suggestionsBoxController?._suggestionsBox = this._suggestionsBox;
     if (isWebMobile) {
-      keyboardVisibilityController = KeyboardVisibilityController();
-      _keyboardSubscription =
-          keyboardVisibilityController.onChange.listen((bool visible) {
+      keyboardVisibilityController =
+          KeyboardDetectionController(onChanged: (state) {
         setState(() {
-          if (widget.hideSuggestionsOnKeyboardHide && !visible) {
+          if (widget.hideSuggestionsOnKeyboardHide &&
+              state != KeyboardState.visible &&
+              state != KeyboardState.visibling) {
             _effectiveFocusNode!.unfocus();
           }
         });
