@@ -264,7 +264,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
 
 typedef FutureOr<List<T>> SuggestionsCallback<T>(String pattern);
 typedef Widget ItemBuilder<T>(BuildContext context, T itemData);
@@ -595,48 +594,23 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
     with WidgetsBindingObserver {
   FocusNode? _focusNode;
   TextEditingController? _textEditingController;
-  _SuggestionsBox? _suggestionsBox;
 
   TextEditingController? get _effectiveController =>
       widget.textFieldConfiguration.controller ?? _textEditingController;
   FocusNode? get _effectiveFocusNode =>
       widget.textFieldConfiguration.focusNode ?? _focusNode;
-  late VoidCallback _focusNodeListener;
 
   final LayerLink _layerLink = LayerLink();
 
-  // Timer that resizes the suggestion box on each tick. Only active when the user is scrolling.
-  Timer? _resizeOnScrollTimer;
-  // The rate at which the suggestion box will resize when the user is scrolling
-  final Duration _resizeOnScrollRefreshRate = const Duration(milliseconds: 500);
-
-  late PublishSubject _hideSuggestionsController;
-
-  @override
-  void didChangeMetrics() {
-    // Catch keyboard event and orientation change; resize suggestions list
-    this._suggestionsBox!.onChangeMetrics();
-  }
-
   @override
   void dispose() {
-    // TODO: check this
-    // if (this._suggestionsBox._isOpened) {
-    //   this._suggestionsBox._overlayEntry?.remove();
-    // }
-    this._suggestionsBox!.widgetMounted = false;
     WidgetsBinding.instance.removeObserver(this);
 
-    _effectiveFocusNode!.removeListener(_focusNodeListener);
     _focusNode?.dispose();
-    _resizeOnScrollTimer?.cancel();
 
     //TODO: create A Pull Request, dispose the controller create here
     _textEditingController?.dispose();
-    //TODO: Create Pull Request, when dispose the widget and the suggestions in showed need to close
-    _suggestionsBox!.close();
 
-    _hideSuggestionsController.close();
     super.dispose();
   }
 
@@ -645,8 +619,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _hideSuggestionsController = PublishSubject<void>();
-
     if (widget.textFieldConfiguration.controller == null) {
       this._textEditingController = TextEditingController();
     }
@@ -654,138 +626,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
     if (widget.textFieldConfiguration.focusNode == null) {
       this._focusNode = FocusNode();
     }
-
-    this._focusNodeListener = () {
-      if (_effectiveFocusNode!.hasFocus) {
-        this._suggestionsBox?.open();
-      } else {
-        _hideSuggestions();
-      }
-    };
-
-    WidgetsBinding.instance.addPostFrameCallback((duration) {
-      if (mounted) {
-        this._initOverlayEntry();
-        // calculate initial suggestions list size
-        this._suggestionsBox!.resize();
-
-        this._effectiveFocusNode!.addListener(_focusNodeListener);
-
-        // in case we already missed the focus event
-        if (this._effectiveFocusNode!.hasFocus) {
-          this._suggestionsBox?.open();
-        }
-
-        ScrollableState? scrollableState = Scrollable.maybeOf(context);
-        if (scrollableState != null) {
-          scrollableState.position.isScrollingNotifier.addListener(() {
-            bool isScrolling =
-                scrollableState.position.isScrollingNotifier.value;
-            _resizeOnScrollTimer?.cancel();
-            if (isScrolling) {
-              // Scroll started
-              _resizeOnScrollTimer =
-                  Timer.periodic(_resizeOnScrollRefreshRate, (timer) {
-                _suggestionsBox!.resize();
-              });
-            } else {
-              // Scroll finished
-              _suggestionsBox!.resize();
-            }
-          });
-        }
-      }
-    });
-  }
-
-  /// TODO: Create Pull Request
-  /// Called for resize the suggestions box when have error
-  void _onChange() {
-    WidgetsBinding.instance.addPostFrameCallback((duration) {
-      _suggestionsBox!.resize();
-    });
-  }
-
-  void _hideSuggestions() {
-    _hideSuggestionsController.add(null);
-    // TODO: check: removed this for animate hide suggestions
-    // this._suggestionsBox.close();
-  }
-
-  void _initOverlayEntry() {
-    this._suggestionsBox!._overlayEntry = OverlayEntry(builder: (context) {
-      final suggestionsList = _SuggestionsList<T>(
-        suggestionsBox: _suggestionsBox,
-        showSuggestionsWhenIsEmpty: widget.showSuggestionsWhenIsEmpty,
-        hideSuggestions: _hideSuggestionsController.stream,
-        removeSuggestionOnLongPress: widget.removeSuggestionOnLongPress,
-        decoration: widget.suggestionsBoxDecoration,
-        debounceDuration: widget.debounceDuration,
-        controller: this._effectiveController,
-        loadingBuilder: widget.loadingBuilder,
-        noItemsFoundBuilder: widget.noItemsFoundBuilder,
-        errorBuilder: widget.errorBuilder,
-        transitionBuilder: widget.transitionBuilder,
-        suggestionsCallback: widget.suggestionsCallback,
-        animationDuration: widget.animationDuration,
-        animationStart: widget.animationStart,
-        getImmediateSuggestions: widget.getImmediateSuggestions,
-        onSuggestionSelected: (T selection) {
-          if (!widget.keepSuggestionsOnSuggestionSelected) {
-            this._effectiveFocusNode!.unfocus();
-            _hideSuggestions();
-          }
-          widget.onSuggestionSelected(selection);
-        },
-        onSuggestionRemoved: widget.onSuggestionRemoved,
-        itemBuilder: widget.itemBuilder,
-        direction: _suggestionsBox!.direction,
-        hideOnLoading: widget.hideOnLoading,
-        hideOnEmpty: widget.hideOnEmpty,
-        hideOnError: widget.hideOnError,
-        keepSuggestionsOnLoading: widget.keepSuggestionsOnLoading,
-      );
-
-      double w = _suggestionsBox!.textBoxWidth;
-      if (widget.suggestionsBoxDecoration.constraints != null) {
-        if (widget.suggestionsBoxDecoration.constraints!.minWidth != 0.0 &&
-            widget.suggestionsBoxDecoration.constraints!.maxWidth !=
-                double.infinity) {
-          w = (widget.suggestionsBoxDecoration.constraints!.minWidth +
-                  widget.suggestionsBoxDecoration.constraints!.maxWidth) /
-              2;
-        } else if (widget.suggestionsBoxDecoration.constraints!.minWidth !=
-                0.0 &&
-            widget.suggestionsBoxDecoration.constraints!.minWidth > w) {
-          w = widget.suggestionsBoxDecoration.constraints!.minWidth;
-        } else if (widget.suggestionsBoxDecoration.constraints!.maxWidth !=
-                double.infinity &&
-            widget.suggestionsBoxDecoration.constraints!.maxWidth < w) {
-          w = widget.suggestionsBoxDecoration.constraints!.maxWidth;
-        }
-      }
-
-      return Positioned(
-        width: w,
-        child: CompositedTransformFollower(
-          link: this._layerLink,
-          showWhenUnlinked: false,
-          offset: Offset(
-              0.0,
-              _suggestionsBox!.direction == AxisDirection.down
-                  ? _suggestionsBox!.textBoxHeight +
-                      widget.suggestionsBoxVerticalOffset
-                  : _suggestionsBox!.directionUpOffset),
-          child: _suggestionsBox!.direction == AxisDirection.down
-              ? suggestionsList
-              : FractionalTranslation(
-                  translation:
-                      Offset(0.0, -1.0), // visually flips list to go up
-                  child: suggestionsList,
-                ),
-        ),
-      );
-    });
   }
 
   @override
@@ -815,7 +655,6 @@ class TypeAheadFieldState<T> extends State<TypeAheadField<T>>
           if (widget.textFieldConfiguration.onChanged != null) {
             widget.textFieldConfiguration.onChanged!(value);
           }
-          _onChange();
         },
         onSubmitted: widget.textFieldConfiguration.onSubmitted,
         onEditingComplete: widget.textFieldConfiguration.onEditingComplete,
